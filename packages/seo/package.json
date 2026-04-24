@@ -1,0 +1,54 @@
+{
+  "name": "@blogkit/seo",
+  "version": "0.0.0",
+  "description": "Pure-function emitters for the BlogKit optimization stack: JSON-LD, sitemap, RSS/Atom, robots.txt, llms.txt.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./jsonld": {
+      "types": "./dist/jsonld.d.ts",
+      "import": "./dist/jsonld.js"
+    },
+    "./sitemap": {
+      "types": "./dist/sitemap.d.ts",
+      "import": "./dist/sitemap.js"
+    },
+    "./robots": {
+      "types": "./dist/robots.d.ts",
+      "import": "./dist/robots.js"
+    },
+    "./llms-txt": {
+      "types": "./dist/llms-txt.d.ts",
+      "import": "./dist/llms-txt.js"
+    },
+    "./feeds": {
+      "types": "./dist/feeds.d.ts",
+      "import": "./dist/feeds.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@blogkit/core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.0"
+  }
+}

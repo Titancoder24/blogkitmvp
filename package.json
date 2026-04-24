@@ -1,0 +1,28 @@
+{
+  "name": "blogkit-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Monorepo for @blogkit/* — the agent-native, SEO-maximal headless CMS for React meta-frameworks.",
+  "license": "MIT",
+  "packageManager": "pnpm@9.12.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r --filter \"./packages/*\" run build",
+    "dev": "pnpm -r --parallel --filter \"./packages/*\" run dev",
+    "typecheck": "pnpm -r --filter \"./packages/*\" run typecheck",
+    "test": "pnpm -r --filter \"./packages/*\" run test",
+    "lint": "pnpm -r --filter \"./packages/*\" run lint",
+    "clean": "pnpm -r exec rm -rf dist .turbo node_modules/.cache"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=18.18"
+  }
+}
