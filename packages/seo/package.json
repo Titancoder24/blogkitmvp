@@ -31,6 +31,10 @@
     "./feeds": {
       "types": "./dist/feeds.d.ts",
       "import": "./dist/feeds.js"
+    },
+    "./ai-plugin": {
+      "types": "./dist/ai-plugin.d.ts",
+      "import": "./dist/ai-plugin.js"
     }
   },
   "files": [

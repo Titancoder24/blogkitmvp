@@ -12,3 +12,4 @@ export * from "./sitemap.js";
 export * from "./robots.js";
 export * from "./llms-txt.js";
 export * from "./feeds.js";
+export * from "./ai-plugin.js";

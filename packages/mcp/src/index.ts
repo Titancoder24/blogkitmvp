@@ -1,16 +1,41 @@
 /**
- * `@blogkit/mcp` — MCP server.
+ * `@blogkit/mcp` — the MCP server package.
  *
- * The full server (PRD §9) lands in week 14 of §12. This file exists so
- * dependents can already import the package; the implementation will:
+ * - `serveMcpStdio(adapter)` for local agents (Claude Code, Cursor stdio,
+ *   Gemini CLI). Started by `blogkit mcp-serve`.
+ * - `createMcpHttpHandler(adapter)` for HTTP/SSE transport, mounted at
+ *   `/api/mcp` by the framework adapters.
+ * - `dispatch` and `listTools` for callers wiring custom transports.
  *
- *   - speak MCP over stdio (for Claude Code, Cursor stdio, Gemini CLI),
- *   - speak MCP over HTTP/SSE (mounted at `/api/mcp` by framework adapters),
- *   - expose the tool surface in PRD §9.3 (content, taxonomy, media,
- *     SEO, template introspection, theme tools),
- *   - authenticate via tokens from `BlogKitAdapter.mcpTokens`,
- *   - emit one row to `audit_log` per write/publish action.
+ * The tool surface (PRD §9.3) is described by `TOOL_SCHEMAS`; tool names
+ * that v1.5 will add to enable agent-driven tool/template/theme creation
+ * (PRD §19.2) are tracked in `FUTURE_TOOL_NAMES`.
  */
-import type { TOOL_NAMES } from "./tools.js";
-export { TOOL_NAMES };
-export type ToolName = (typeof TOOL_NAMES)[number];
+export { TOOL_NAMES } from "./tools.js";
+export { TOOL_SCHEMAS } from "./schemas.js";
+export type { JsonSchema, ToolSchema } from "./schemas.js";
+export { dispatch, listTools, findToolSchema } from "./router.js";
+export type { DispatchOptions, DispatchResult } from "./router.js";
+export { handlers } from "./handlers.js";
+export type { HandlerContext } from "./handlers.js";
+export { serveMcpStdio } from "./stdio.js";
+export type { ServeStdioOptions } from "./stdio.js";
+export { createMcpHttpHandler } from "./http.js";
+export type { CreateMcpHttpHandlerOptions } from "./http.js";
+
+/**
+ * Tools that ship in v1.5 once the agent-driven tool/template/theme
+ * authoring surface is stable (PRD §19.2). Listed here so the v1.5
+ * MCP catalog can be derived without spelunking through the codebase.
+ */
+export const FUTURE_TOOL_NAMES = [
+  "create_template",
+  "update_template",
+  "define_field",
+  "define_block",
+  "define_schema_mapping",
+  "define_scoring_rule",
+  "create_theme",
+  "create_integration",
+  "create_workflow",
+] as const;

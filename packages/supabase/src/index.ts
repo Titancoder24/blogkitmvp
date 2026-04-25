@@ -11,5 +11,8 @@
  * type-check against it.
  */
 export * from "./adapter.js";
-
+export { createSupabaseAdapter } from "./createAdapter.js";
+export type { CreateAdapterOptions } from "./createAdapter.js";
+export { runMigrations } from "./runMigrations.js";
+export type { MigrationRunOptions, MigrationRunResult } from "./runMigrations.js";
 export { MIGRATIONS_PATH, MIGRATION_FILES } from "./migrations.js";

@@ -14,4 +14,11 @@ export default defineConfig({
   target: "node18",
   splitting: false,
   shims: false,
+  external: [
+    "@blogkit/seo",
+    "@blogkit/supabase",
+    "@blogkit/mcp",
+    "@supabase/supabase-js",
+    "pg",
+  ],
 });

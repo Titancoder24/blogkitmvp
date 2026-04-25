@@ -1,0 +1,31 @@
+{
+  "name": "@blogkit/scoring",
+  "version": "0.0.0",
+  "description": "Pure-function scoring engine for the BlogKit AI Visibility Score. Six discipline scorers (SEO, AEO, GEO, AIO, LLMO, Agent-SEO) + geometric-mean aggregate, template-aware (PRD §5B).",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@blogkit/core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.0"
+  }
+}

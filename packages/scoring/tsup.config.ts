@@ -1,15 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: [
-    "src/index.ts",
-    "src/jsonld.ts",
-    "src/sitemap.ts",
-    "src/robots.ts",
-    "src/llms-txt.ts",
-    "src/feeds.ts",
-    "src/ai-plugin.ts",
-  ],
+  entry: ["src/index.ts"],
   format: ["esm"],
   dts: true,
   sourcemap: true,
