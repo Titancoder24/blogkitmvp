@@ -8,6 +8,8 @@
  * the strings these functions return at the right routes.
  */
 export * from "./jsonld.js";
+export * from "./template-stack.js";
+export * from "./collections.js";
 export * from "./sitemap.js";
 export * from "./robots.js";
 export * from "./llms-txt.js";

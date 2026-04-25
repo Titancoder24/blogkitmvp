@@ -23,18 +23,14 @@ export type { ServeStdioOptions } from "./stdio.js";
 export { createMcpHttpHandler } from "./http.js";
 export type { CreateMcpHttpHandlerOptions } from "./http.js";
 
+export { agentHandlers } from "./agent-tools.js";
+
 /**
- * Tools that ship in v1.5 once the agent-driven tool/template/theme
- * authoring surface is stable (PRD §19.2). Listed here so the v1.5
- * MCP catalog can be derived without spelunking through the codebase.
+ * Agent-driven authoring tools that exist further down the v1.5 roadmap
+ * but aren't shipped yet (themes, integrations, workflows). Listed here
+ * so the catalog can be derived without spelunking through the codebase.
  */
 export const FUTURE_TOOL_NAMES = [
-  "create_template",
-  "update_template",
-  "define_field",
-  "define_block",
-  "define_schema_mapping",
-  "define_scoring_rule",
   "create_theme",
   "create_integration",
   "create_workflow",

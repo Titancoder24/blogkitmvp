@@ -4,6 +4,8 @@ export default defineConfig({
   entry: [
     "src/index.ts",
     "src/jsonld.ts",
+    "src/template-stack.ts",
+    "src/collections.ts",
     "src/sitemap.ts",
     "src/robots.ts",
     "src/llms-txt.ts",

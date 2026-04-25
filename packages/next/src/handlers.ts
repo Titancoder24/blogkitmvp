@@ -16,11 +16,14 @@ import type { ResolvedBlogKitConfig } from "@blogkit/core/types";
 import {
   buildAiPluginManifest,
   buildAtomFeed,
+  buildCollectionPages,
   buildLlmsFullTxt,
   buildLlmsTxt,
   buildRobotsTxt,
   buildRssFeed,
   buildSitemap,
+  collectionSitemapEntries,
+  type CollectionPage,
 } from "@blogkit/seo";
 import { createMcpHttpHandler } from "@blogkit/mcp";
 import type { BlogKitAdapter } from "@blogkit/supabase/adapter";
@@ -40,11 +43,15 @@ export function sitemapHandler({ adapter, config }: HandlerDependencies) {
       orderBy: "published_at",
       orderDir: "desc",
     });
+    // Auto-include collection pages (/glossary, /reviews, /best, …) so
+    // they ship in the sitemap without manual configuration.
+    const collections = buildCollectionPages({ site: config.site, posts });
     const xml = buildSitemap({
       siteUrl: config.site.url,
       entries: [
         { url: "/", changefreq: "daily", priority: 1.0 },
         { url: config.routes.blog, changefreq: "daily", priority: 0.9 },
+        ...collectionSitemapEntries(collections),
         ...posts.map((post) => ({
           url: `${config.routes.blog}/${post.slug}`,
           lastmod: post.lastRefreshedAt ?? post.publishedAt ?? post.updatedAt,
@@ -56,6 +63,35 @@ export function sitemapHandler({ adapter, config }: HandlerDependencies) {
       headers: { "content-type": "application/xml; charset=utf-8", "cache-control": FIVE_MINUTES },
     });
   };
+}
+
+/**
+ * `collectionPageData(adapter, config, path)` — server-loader for one of
+ * the auto-generated collection routes. The page component reads this
+ * and renders the index plus the JSON-LD stack.
+ *
+ * Usage in App Router:
+ *   // app/glossary/page.tsx
+ *   import { collectionPageData } from "@blogkit/next";
+ *   export default async function GlossaryPage() {
+ *     const data = await collectionPageData({ adapter, config }, "/glossary");
+ *     if (!data) notFound();
+ *     return <CollectionPageView data={data} />;
+ *   }
+ */
+export async function collectionPageData(
+  deps: HandlerDependencies,
+  path: string,
+): Promise<CollectionPage | null> {
+  const { adapter, config } = deps;
+  const posts = await adapter.posts.list({
+    status: "published",
+    limit: 5000,
+    orderBy: "published_at",
+    orderDir: "desc",
+  });
+  const pages = buildCollectionPages({ site: config.site, posts });
+  return pages.find((p) => p.definition.path === path) ?? null;
 }
 
 export function rssHandler({ adapter, config }: HandlerDependencies) {

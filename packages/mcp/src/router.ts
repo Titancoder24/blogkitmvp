@@ -57,9 +57,15 @@ export async function dispatch(
     const result = await handler(ctx, args);
     return { ok: true, result };
   } catch (err) {
+    // Handlers can attach `code: "invalid_args"` to surface validation
+    // failures as 4xx-class errors; everything else is a 5xx.
+    const code =
+      err && typeof err === "object" && "code" in err && err.code === "invalid_args"
+        ? "invalid_args"
+        : "internal";
     return {
       ok: false,
-      code: "internal",
+      code,
       message: err instanceof Error ? err.message : String(err),
     };
   }

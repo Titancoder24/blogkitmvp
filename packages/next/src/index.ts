@@ -16,6 +16,7 @@
 export {
   aiPluginManifestHandler,
   atomHandler,
+  collectionPageData,
   llmsFullTxtHandler,
   llmsTxtHandler,
   mcpHandler,

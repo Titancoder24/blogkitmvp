@@ -246,4 +246,152 @@ export const TOOL_SCHEMAS: readonly ToolSchema[] = [
       additionalProperties: false,
     },
   },
+
+  // ---------- v1.5: agent-driven tool/template authoring (PRD §19.2) ----------
+  {
+    name: "create_template",
+    description:
+      "Create a custom content template. Optionally fork an existing template to inherit its fields, blocks, and scoring rules. Validates inputs against Schema.org and field-type whitelists; emits one audit-log row.",
+    scope: "admin",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", description: "Lowercase kebab-case, 2–40 chars." },
+        name: { type: "string" },
+        description: { type: "string" },
+        base_template_id: {
+          type: "string",
+          description: "Optional id of an existing template to fork from.",
+        },
+        fields: {
+          type: "array",
+          items: { type: "object" },
+          description: "Array of field specs (name, type, required?, options?, references?).",
+        },
+        blocks: {
+          type: "array",
+          items: { type: "string" },
+          description: "Block kinds available in this template's editor palette.",
+        },
+        schema_mapping: {
+          type: "object",
+          description:
+            "JSON-LD emission rules. Must include `type` from the Schema.org allow-list.",
+        },
+        scoring_rules: {
+          type: "object",
+          description:
+            "Per-discipline weights (0–5) and required checks. Drives the AI Visibility Score for posts using this template.",
+        },
+        default_layout: {
+          type: "object",
+          description: "Optional default arrangement of blocks for new posts.",
+        },
+      },
+      required: ["id", "name"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "update_template",
+    description:
+      "Update a custom template. Built-in templates are read-only — fork them via create_template instead.",
+    scope: "admin",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        name: { type: "string" },
+        description: { type: "string" },
+        fields: { type: "array", items: { type: "object" } },
+        blocks: { type: "array", items: { type: "string" } },
+        schema_mapping: { type: "object" },
+        scoring_rules: { type: "object" },
+      },
+      required: ["id"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "define_field",
+    description:
+      "Append a single field to a custom template. Convenience over update_template; agents typically add fields one at a time during a conversation.",
+    scope: "admin",
+    inputSchema: {
+      type: "object",
+      properties: {
+        template_id: { type: "string" },
+        name: { type: "string" },
+        type: {
+          type: "string",
+          enum: [
+            "text",
+            "rich_text",
+            "image",
+            "number",
+            "date",
+            "select",
+            "multi_select",
+            "reference",
+            "json",
+          ],
+        },
+        required: { type: "boolean" },
+        options: { type: "array", items: { type: "string" } },
+        references: { type: "string" },
+      },
+      required: ["template_id", "name", "type"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "define_block",
+    description:
+      "Add or remove a block kind from a custom template's editor palette.",
+    scope: "admin",
+    inputSchema: {
+      type: "object",
+      properties: {
+        template_id: { type: "string" },
+        block: { type: "string" },
+        action: { type: "string", enum: ["add", "remove"], default: "add" },
+      },
+      required: ["template_id", "block"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "define_schema_mapping",
+    description:
+      "Set JSON-LD emission rules for a custom template. The Schema.org `type` must come from the allow-list (validated server-side to keep Rich Results valid).",
+    scope: "admin",
+    inputSchema: {
+      type: "object",
+      properties: {
+        template_id: { type: "string" },
+        type: { type: "string" },
+      },
+      required: ["template_id", "type"],
+      additionalProperties: true,
+    },
+  },
+  {
+    name: "define_scoring_rule",
+    description:
+      "Set the per-discipline weights and required checks for a custom template. Weights are bounded to [0, 5].",
+    scope: "admin",
+    inputSchema: {
+      type: "object",
+      properties: {
+        template_id: { type: "string" },
+        scoring_rules: {
+          type: "object",
+          description:
+            "Object with `weights: { seo, aeo, geo, aio, llmo, agentSeo }` and optional `requires` map.",
+        },
+      },
+      required: ["template_id", "scoring_rules"],
+      additionalProperties: false,
+    },
+  },
 ];

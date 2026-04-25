@@ -9,6 +9,7 @@
 import type { Post, SiteConfig } from "@blogkit/core/types";
 import { buildVisibilityReport, type ScoreSiteState } from "@blogkit/scoring";
 import type { BlogKitAdapter } from "@blogkit/supabase/adapter";
+import { agentHandlers } from "./agent-tools.js";
 
 export interface HandlerContext {
   adapter: BlogKitAdapter;
@@ -175,6 +176,9 @@ export const handlers: Record<string, Handler> = {
       site,
     });
   },
+
+  // v1.5 — agent-driven tool/template authoring (PRD §19.2).
+  ...agentHandlers,
 };
 
 async function resolveTagIds(
