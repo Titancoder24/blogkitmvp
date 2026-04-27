@@ -75,6 +75,38 @@ export type {
 } from "./site-report.js";
 
 export { extractForChatGpt, extractForGooglebot } from "./view-as.js";
+
+// v1.1 — brand voice, topic gaps, alt text, headlines.
+export { scoreVoice, DEFAULT_VOICE_GUIDE } from "./voice.js";
+export type { VoiceGuide, ScoreVoiceInput } from "./voice.js";
+
+export { analyzeTopicGaps } from "./topic-gaps.js";
+export type {
+  AnalyzeGapsInput,
+  TopicCluster,
+  TopicGap,
+  TopicGapsReport,
+} from "./topic-gaps.js";
+
+export { suggestAltText, suggestAltTextBatch } from "./alt-text.js";
+export type {
+  BatchAltTextInput,
+  SuggestAltTextInput,
+  SuggestAltTextResult,
+  VisionModel,
+  VisionModelInput,
+  VisionModelOutput,
+} from "./alt-text.js";
+
+export { pickWinner, scoreHeadline } from "./headlines.js";
+export type {
+  HeadlineBreakdown,
+  HeadlineScore,
+  HeadlineVariant,
+  HeadlineScoreInput,
+  PickWinnerInput,
+  PickWinnerResult,
+} from "./headlines.js";
 export type {
   CrawlerExtraction,
   CrawlerIssue,

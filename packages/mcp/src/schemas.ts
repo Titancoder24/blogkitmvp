@@ -394,4 +394,100 @@ export const TOOL_SCHEMAS: readonly ToolSchema[] = [
       additionalProperties: false,
     },
   },
+
+  // ---------- v1.1 differentiator-pack tools ----------
+  {
+    name: "score_headlines",
+    description:
+      "Score one or more headline variants for a post and return them ranked by predicted AI Visibility impact (length band, keyword frontload, listicle alignment, power words, question bonus, brand presence, emoji penalty).",
+    scope: "read",
+    inputSchema: {
+      type: "object",
+      properties: {
+        variants: {
+          type: "array",
+          items: {
+            type: "object",
+            required: ["id", "text"],
+            properties: {
+              id: { type: "string" },
+              text: { type: "string" },
+            },
+            additionalProperties: false,
+          },
+        },
+        target_keyword: { type: "string" },
+        required_brand: { type: "string" },
+        body_word_count: { type: "number" },
+        body_has_list: { type: "boolean" },
+      },
+      required: ["variants"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "analyze_topic_gaps",
+    description:
+      "Cluster the published corpus by tag co-occurrence and surface under-covered topics. Returns clusters, coverage per cluster, and the top content gaps with suggested templates.",
+    scope: "read",
+    inputSchema: {
+      type: "object",
+      properties: {
+        min_cluster_size: { type: "number", default: 3 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "suggest_alt_text",
+    description:
+      "Generate alt text for an image. Uses a pluggable vision model when configured; falls back to filename + context heuristics. The result includes a confidence and an explicit `source: model | heuristic` label.",
+    scope: "read",
+    inputSchema: {
+      type: "object",
+      properties: {
+        image_url: { type: "string" },
+        context: {
+          type: "string",
+          description: "Surrounding paragraph + post title used as a hint.",
+        },
+        max_chars: { type: "number", default: 125 },
+      },
+      required: ["image_url"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "list_mention_rollups",
+    description:
+      "Per-tracked-query AI mention rollups (citation rate, share-of-voice, top competitors, week-over-week delta) across ChatGPT, Claude, Perplexity, Gemini, Copilot, and Grok.",
+    scope: "read",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query_id: { type: "string" },
+        days: {
+          type: "number",
+          default: 7,
+          description: "Period to roll up over.",
+        },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "score_voice",
+    description:
+      "Grade a post (or arbitrary text) against the active brand voice guide: banned phrases, required phrases, tone-word density, sentence-length band.",
+    scope: "read",
+    inputSchema: {
+      type: "object",
+      properties: {
+        body_mdx: { type: "string" },
+        title: { type: "string" },
+      },
+      required: ["body_mdx"],
+      additionalProperties: false,
+    },
+  },
 ];

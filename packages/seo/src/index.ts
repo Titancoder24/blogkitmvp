@@ -15,3 +15,5 @@ export * from "./robots.js";
 export * from "./llms-txt.js";
 export * from "./feeds.js";
 export * from "./ai-plugin.js";
+export * from "./openapi.js";
+export * from "./c2pa.js";

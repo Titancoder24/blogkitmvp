@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts", "src/stdio.ts", "src/http.ts"],
+  entry: ["src/index.ts", "src/stdio.ts", "src/http.ts", "src/federation.ts"],
   format: ["esm"],
   dts: true,
   sourcemap: true,
@@ -10,6 +10,7 @@ export default defineConfig({
   splitting: false,
   external: [
     "@blogkit/core",
+    "@blogkit/intelligence",
     "@blogkit/scoring",
     "@blogkit/seo",
     "@blogkit/supabase",

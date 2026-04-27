@@ -7,7 +7,17 @@
  * supplied by the transport (a token id for HTTP, "system" for stdio).
  */
 import type { Post, SiteConfig } from "@blogkit/core/types";
-import { buildVisibilityReport, type ScoreSiteState } from "@blogkit/scoring";
+import {
+  analyzeTopicGaps,
+  buildVisibilityReport,
+  pickWinner,
+  scoreVoice,
+  suggestAltText,
+  type HeadlineVariant,
+  type ScoreSiteState,
+  type VoiceGuide,
+} from "@blogkit/scoring";
+import { summarizeMentions } from "@blogkit/intelligence";
 import type { BlogKitAdapter } from "@blogkit/supabase/adapter";
 import { agentHandlers } from "./agent-tools.js";
 
@@ -175,6 +185,106 @@ export const handlers: Record<string, Handler> = {
       template: template ?? undefined,
       site,
     });
+  },
+
+  // v1.1 — headline scorer.
+  async score_headlines(_ctx, args) {
+    const variants = (args.variants as HeadlineVariant[]) ?? [];
+    if (variants.length === 0) return { winner: null, ranking: [] };
+    return pickWinner({
+      variants,
+      targetKeyword: args.target_keyword as string | undefined,
+      requiredBrand: args.required_brand as string | undefined,
+      bodyWordCount: args.body_word_count as number | undefined,
+      bodyHasList: args.body_has_list as boolean | undefined,
+    });
+  },
+
+  // v1.1 — topic-gap analyzer.
+  async analyze_topic_gaps(ctx, args) {
+    const posts = await ctx.adapter.posts.list({
+      status: "published",
+      limit: 5000,
+    });
+    const tagMap = new Map<string, string[]>();
+    await Promise.all(
+      posts.map(async (post) => {
+        const tags = await ctx.adapter.posts.getTags(post.id);
+        tagMap.set(
+          post.id,
+          tags.map((t) => t.slug),
+        );
+      }),
+    );
+    return analyzeTopicGaps({
+      posts,
+      postTags: tagMap,
+      minClusterSize: typeof args.min_cluster_size === "number" ? args.min_cluster_size : 3,
+    });
+  },
+
+  // v1.1 — alt-text suggestion.
+  async suggest_alt_text(_ctx, args) {
+    return suggestAltText({
+      imageUrl: String(args.image_url),
+      context: String(args.context ?? ""),
+      maxChars: typeof args.max_chars === "number" ? args.max_chars : 125,
+      // Vision model is optional and set by the framework adapter at
+      // mount time. When absent, suggestAltText falls back to heuristics.
+    });
+  },
+
+  // v1.1 — voice scorer (reads the active voice guide from settings).
+  async score_voice(ctx, args) {
+    const guide = ((await ctx.adapter.settings.get("public.voice_guide")) as VoiceGuide | null) ?? {
+      banned: [],
+      required: [],
+      tone: [],
+      minSentenceWords: 8,
+      maxSentenceWords: 30,
+    };
+    return scoreVoice({
+      bodyMdx: String(args.body_mdx),
+      title: args.title as string | undefined,
+      guide,
+    });
+  },
+
+  // v1.1 — mention rollups (read-only — the polling worker writes results).
+  async list_mention_rollups(ctx, args) {
+    const queries = await ctx.adapter.settings.get<Array<{ id: string; query: string }>>("admin.mention_queries");
+    if (!queries || queries.length === 0) return [];
+    const days = typeof args.days === "number" ? args.days : 7;
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    const results = await ctx.adapter.settings.get<
+      Array<{
+        queryId: string;
+        provider: string;
+        probedAt: string;
+        wasCited: boolean;
+        citedSlugs: string[];
+        competitorDomains: string[];
+        citationRank: number | null;
+        excerpt: string;
+        meta?: Record<string, unknown>;
+      }>
+    >("admin.mention_results");
+    const byQuery = new Map<string, typeof results>();
+    for (const r of results ?? []) {
+      if (r.probedAt < since) continue;
+      const list = byQuery.get(r.queryId) ?? [];
+      list.push(r);
+      byQuery.set(r.queryId, list);
+    }
+    const filteredQueries = args.query_id
+      ? queries.filter((q) => q.id === args.query_id)
+      : queries;
+    return filteredQueries.map((query) =>
+      summarizeMentions({
+        query,
+        results: (byQuery.get(query.id) ?? []) as any,
+      }),
+    );
   },
 
   // v1.5 — agent-driven tool/template authoring (PRD §19.2).

@@ -10,11 +10,14 @@
  * Gemini CLI) can hit this endpoint without adapter glue.
  */
 import type { BlogKitAdapter } from "@blogkit/supabase/adapter";
+import type { Federator } from "./federation.js";
 import { type HandlerContext } from "./handlers.js";
 import { dispatch, listTools } from "./router.js";
 
 export interface CreateMcpHttpHandlerOptions {
   adapter: BlogKitAdapter;
+  /** Optional federator — when present, namespaced tools route to children. */
+  federator?: Federator;
 }
 
 export interface JsonRpcRequest {
@@ -25,13 +28,14 @@ export interface JsonRpcRequest {
 }
 
 export function createMcpHttpHandler(opts: CreateMcpHttpHandlerOptions) {
-  const { adapter } = opts;
+  const { adapter, federator } = opts;
 
   return async function handle(request: Request): Promise<Response> {
     if (request.method === "GET") {
-      // Convenience handshake: return the tool catalog as JSON so callers
-      // can preview what's available without speaking JSON-RPC.
-      return Response.json({ tools: listTools() });
+      // Convenience handshake: return the tool catalog (including any
+      // federated tools) as JSON so callers can preview what's available
+      // without speaking JSON-RPC.
+      return Response.json({ tools: listTools(federator) });
     }
 
     if (request.method !== "POST") {
@@ -68,7 +72,7 @@ export function createMcpHttpHandler(opts: CreateMcpHttpHandlerOptions) {
     };
 
     if (payload.method === "tools/list") {
-      return Response.json(rpcResult(payload.id, { tools: listTools() }));
+      return Response.json(rpcResult(payload.id, { tools: listTools(federator) }));
     }
 
     if (payload.method === "tools/call") {
@@ -81,6 +85,7 @@ export function createMcpHttpHandler(opts: CreateMcpHttpHandlerOptions) {
       }
       const result = await dispatch(ctx, params.name, params.arguments ?? {}, {
         scope: token.scope,
+        federator,
       });
       if (!result.ok) {
         const status =

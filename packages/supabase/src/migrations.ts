@@ -16,6 +16,7 @@ export const MIGRATION_FILES = [
   "0002_rls_policies.sql",
   "0003_seed_templates.sql",
   "0004_storage_buckets.sql",
+  "0005_v11_features.sql",
 ] as const;
 
 export type MigrationFile = (typeof MIGRATION_FILES)[number];

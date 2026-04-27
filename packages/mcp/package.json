@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@blogkit/core": "workspace:*",
+    "@blogkit/intelligence": "workspace:*",
     "@blogkit/scoring": "workspace:*",
     "@blogkit/seo": "workspace:*",
     "@blogkit/supabase": "workspace:*"

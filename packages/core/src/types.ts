@@ -239,7 +239,13 @@ export type ScoreDiscipline =
   | "geo"
   | "aio"
   | "llmo"
-  | "agentSeo";
+  | "agentSeo"
+  /**
+   * Voice — the 7th discipline. Only contributes to the aggregate when
+   * the site has an active brand voice guide; weight defaults to 0
+   * otherwise so an empty guide doesn't depress the headline number.
+   */
+  | "voice";
 
 export interface AiVisibilityReport {
   postId: string;

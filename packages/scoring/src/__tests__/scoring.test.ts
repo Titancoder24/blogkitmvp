@@ -234,8 +234,9 @@ describe("weightedGeoMean", () => {
         aio: wrap(80),
         llmo: wrap(80),
         agentSeo: wrap(80),
+        voice: wrap(80),
       },
-      { seo: 1, aeo: 1, geo: 1, aio: 1, llmo: 1, agentSeo: 1 },
+      { seo: 1, aeo: 1, geo: 1, aio: 1, llmo: 1, agentSeo: 1, voice: 0 },
     );
     expect(result).toBe(80);
   });
@@ -250,8 +251,9 @@ describe("weightedGeoMean", () => {
         aio: wrap(100),
         llmo: wrap(100),
         agentSeo: wrap(100),
+        voice: wrap(100),
       },
-      { seo: 1, aeo: 1, geo: 1, aio: 1, llmo: 1, agentSeo: 1 },
+      { seo: 1, aeo: 1, geo: 1, aio: 1, llmo: 1, agentSeo: 1, voice: 0 },
     );
     expect(result).toBeGreaterThan(0);
     expect(result).toBeLessThan(60);

@@ -13,6 +13,7 @@ import type {
   Template,
 } from "@blogkit/core/types";
 import { type BodyAnalysis, analyzeBody } from "./text.js";
+import type { VoiceGuide } from "./voice.js";
 
 export interface ScoreSiteState {
   /** Resolved site config. */
@@ -35,6 +36,11 @@ export interface ScoreContext {
   site: ScoreSiteState;
   /** Optional pre-computed body analysis; avoids redundant work. */
   body?: BodyAnalysis;
+  /**
+   * Active voice guide. When undefined, the voice scorer returns 100
+   * with no fixes (so absence of a guide doesn't depress the aggregate).
+   */
+  voiceGuide?: VoiceGuide;
 }
 
 export function withBody(ctx: ScoreContext): Required<Pick<ScoreContext, "body">> &

@@ -90,6 +90,7 @@ const DISCIPLINES: readonly ScoreDiscipline[] = [
   "aio",
   "llmo",
   "agentSeo",
+  "voice",
 ];
 
 export function buildSiteVisibilityReport(
@@ -186,6 +187,7 @@ function zeroScores(): Record<ScoreDiscipline, number> {
     aio: 0,
     llmo: 0,
     agentSeo: 0,
+    voice: 0,
   };
 }
 

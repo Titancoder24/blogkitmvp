@@ -11,6 +11,8 @@ export default defineConfig({
     "src/llms-txt.ts",
     "src/feeds.ts",
     "src/ai-plugin.ts",
+    "src/openapi.ts",
+    "src/c2pa.ts",
   ],
   format: ["esm"],
   dts: true,

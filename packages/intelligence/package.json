@@ -1,0 +1,32 @@
+{
+  "name": "@blogkit/intelligence",
+  "version": "0.0.0",
+  "description": "I/O-bound editorial intelligence — AI mention tracker, webhook firehose, external-link health, alt-text suggester. Pluggable provider interfaces with stub implementations.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@blogkit/core": "workspace:*",
+    "@blogkit/scoring": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.0"
+  }
+}

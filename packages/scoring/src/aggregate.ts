@@ -27,6 +27,7 @@ import { scoreGeo } from "./geo.js";
 import { scoreLlmo } from "./llmo.js";
 import { scoreSeo } from "./seo.js";
 import { clampScore } from "./util.js";
+import { scoreVoice } from "./voice.js";
 
 export const DEFAULT_WEIGHTS: Record<ScoreDiscipline, number> = {
   seo: 1,
@@ -35,6 +36,9 @@ export const DEFAULT_WEIGHTS: Record<ScoreDiscipline, number> = {
   aio: 1,
   llmo: 1,
   agentSeo: 1,
+  // Voice contributes 0 by default. Sites with an active voice guide
+  // override this to 0.5–1 in their template/site config.
+  voice: 0,
 };
 
 export function scoreAll(ctx: ScoreContext): Record<ScoreDiscipline, DisciplineScore> {
@@ -46,6 +50,13 @@ export function scoreAll(ctx: ScoreContext): Record<ScoreDiscipline, DisciplineS
     aio: scoreAio(prepared),
     llmo: scoreLlmo(prepared),
     agentSeo: scoreAgentSeo(prepared),
+    voice: prepared.voiceGuide
+      ? scoreVoice({
+          bodyMdx: prepared.post.bodyMdx,
+          title: prepared.post.title,
+          guide: prepared.voiceGuide,
+        })
+      : { score: 100, fixes: [] },
   };
 }
 
@@ -99,5 +110,6 @@ export function resolveWeights(template?: Template): Record<ScoreDiscipline, num
     aio: w.aio ?? DEFAULT_WEIGHTS.aio,
     llmo: w.llmo ?? DEFAULT_WEIGHTS.llmo,
     agentSeo: w.agentSeo ?? DEFAULT_WEIGHTS.agentSeo,
+    voice: w.voice ?? DEFAULT_WEIGHTS.voice,
   };
 }

@@ -24,6 +24,12 @@ export { createMcpHttpHandler } from "./http.js";
 export type { CreateMcpHttpHandlerOptions } from "./http.js";
 
 export { agentHandlers } from "./agent-tools.js";
+export {
+  createFederator,
+  mountStdioClient,
+  mountHttpClient,
+} from "./federation.js";
+export type { FederatedClient, Federator } from "./federation.js";
 
 /**
  * Agent-driven authoring tools that exist further down the v1.5 roadmap
